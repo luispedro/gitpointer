@@ -19,9 +19,29 @@ def maybe_mkdir(d):
 
 github = Github()
 
-seed = u'luispedro'
-queue = [seed]
-seen = set(queue)
+def load_database():
+    from glob import glob
+    from os import path
+    inputs = glob('database/*/*')
+    seen = set(map(path.basename, inputs))
+    queue = []
+    for fn in inputs:
+        f = file(fn)
+        for line in f:
+            line = line.strip()
+            if not line: continue
+            if line not in seen:
+                seen.add(line)
+                queue.append(line)
+        f.close()
+    return seen, queue
+
+seen, queue = load_database()
+if not seen:
+    seed = u'luispedro'
+    queue = [seed]
+    seen = set(queue)
+
 while queue:
     sleep(5)
     user = queue.pop()
