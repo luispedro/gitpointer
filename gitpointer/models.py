@@ -15,6 +15,9 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(255), index=True)
     date_checked = Column(DateTime)
+    def __init__(self, username, date_checked):
+        self.username = username
+        self.date_checked = date_checked
 
 class FollowingRelationship(Base):
     __tablename__ = 'following'
