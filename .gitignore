@@ -1,0 +1,4 @@
+*.pyc
+database
+gitpointer.sqlite3
+logs
