@@ -45,8 +45,14 @@ if not seen:
 while queue:
     sleep(5)
     user = queue.pop()
-    following = github.users.following(user)
-    followers = github.users.followers(user)
+    try:
+        following = github.users.following(user)
+        followers = github.users.followers(user)
+    except:
+        print "Error. Waiting to recover"
+        sleep(30*60)
+        queue.insert(0, user)
+        continue
     maybe_mkdir('database/' + user[:3])
     output = file('database/%s/%s' % (user[:3], user), 'w')
     for f in following:
