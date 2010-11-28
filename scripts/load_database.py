@@ -32,7 +32,6 @@ def upload_user(username, date_checked, following, create_session=None):
             session.add(user2)
         session.add(FollowingRelationship(user.id, user2.id))
     session.commit()
-    session.close()
 
 def main():
     from glob import glob
