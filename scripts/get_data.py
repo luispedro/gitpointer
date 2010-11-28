@@ -43,15 +43,25 @@ if not seen:
     seen = set(queue)
 
 while queue:
+    def recover():
+        print "Error. Waiting to recover", e
+        sleep(30*60)
+        queue.insert(0, user)
     sleep(5)
     user = queue.pop()
     try:
         following = github.users.following(user)
         followers = github.users.followers(user)
+    except RuntimeError, e:
+        if e.args[0].find('404') > 0:
+            following = []
+            followers = []
+            pass
+        else:
+            recover()
+            continue
     except Exception, e:
-        print "Error. Waiting to recover", e
-        sleep(30*60)
-        queue.insert(0, user)
+        recover()
         continue
     maybe_mkdir('database/' + user[:3])
     output = file('database/%s/%s' % (user[:3], user), 'w')
