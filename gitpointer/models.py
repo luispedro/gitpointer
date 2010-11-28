@@ -37,14 +37,21 @@ class Repository(Base):
     id = Column(Integer, primary_key=True)
     owner = Column(Integer, ForeignKey('user.id'), index=True)
     name = Column(String(255))
+    pushed_at = Column(DateTime)
 
-    def __init__(self, owner, name):
+    def __init__(self, owner, name, pushed_at):
         self.owner = owner
         self.name = name
+        self.pushed_at = pushed_at
 
 class WatchRelationship(Base):
     __tablename__ = 'watch'
     id = Column(Integer, primary_key=True)
     watcher = Column(Integer, ForeignKey('user.id'), index=True)
     watched_repo = Column(Integer, ForeignKey('repository.id'), index=True)
+
+    def __init__(self, watcher, watched_repo):
+        self.watcher = watcher
+        self.watched_repo = watched_repo
+
 
