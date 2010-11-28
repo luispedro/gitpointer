@@ -48,8 +48,8 @@ while queue:
     try:
         following = github.users.following(user)
         followers = github.users.followers(user)
-    except:
-        print "Error. Waiting to recover"
+    except Exception, e:
+        print "Error. Waiting to recover", e
         sleep(30*60)
         queue.insert(0, user)
         continue
