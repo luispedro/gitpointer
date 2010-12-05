@@ -28,30 +28,29 @@ def output_watch_text(user, repos):
     
 github = Github()
 session = gitpointer.backend.create_session()
-users = session.query(User).all()
-queue = len(users)
-for u in users:
-    if exists('database/%s/%s.watching' % (u.username[:3], u.username)):
-        queue -= 1
+users = session.query(User).values(User.username, User.id)
+for username,uid in users:
+    if exists('database/%s/%s.watching' % (username[:3], username)):
         continue
     try:
-        repos = github.repos.watching(u.username)
+        repos = github.repos.watching(username)
     except RuntimeError, e:
         if e.args[0].find('404') > 0:
-            continue
-        print 'Error for user: %s' % u
+            print 'Error 404 for user: %s: %s' % (username, e)
+        print 'Error for user: %s: %s' % (username, e)
+        continue
     except:
-        print 'Error for user: %s' % u
-    output_watch_text(u.username, repos)
+        print 'Error for user: %s: %s' % (username, e)
+        continue
+    output_watch_text(username, repos)
     for r in repos:
         repo = session.query(Repository) \
                     .filter_by(owner=r.owner, name=r.name).first()
         if repo is None:
             repo = Repository(r.owner, r.name, r.pushed_at)
             session.add(repo)
-        session.add(WatchRelationship(u.id, repo.id))
+        session.add(WatchRelationship(uid, repo.id))
     session.commit()
-    queue -= 1
-    print 'todo:', queue
+    print 'done', username
     sleep(2)
 
