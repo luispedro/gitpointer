@@ -15,6 +15,9 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(255), index=True)
     date_checked = Column(DateTime)
+    #following = relation('FollowingRelationship', backref='followee')
+    #followers = relation('FollowingRelationship', backref='follower')
+
     def __init__(self, username, date_checked):
         self.username = username
         self.date_checked = date_checked
@@ -22,9 +25,12 @@ class User(Base):
 class FollowingRelationship(Base):
     __tablename__ = 'following'
     id = Column(Integer, primary_key=True)
-    follower = Column(Integer, ForeignKey('user.id'), index=True)
-    followee = Column(Integer, ForeignKey('user.id'), index=True)
-    
+    follower_id = Column(Integer, ForeignKey('user.id'), index=True)
+    followee_id = Column(Integer, ForeignKey('user.id'), index=True)
+
+    follower = relation(User, primaryjoin=(User.id == follower_id))
+    followee = relation(User, primaryjoin=(User.id == followee_id))
+
     def __init__(self, start, end):
         '''
         `start` follows `end`

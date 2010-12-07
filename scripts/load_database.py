@@ -5,6 +5,7 @@ from datetime import datetime
 
 def read_user(fname):
     username = path.basename(fname)
+    username = username[:-len('.follow')]
     date_checked = datetime.fromtimestamp(int(os.stat(fname).st_mtime))
     following = []
     for line in file(fname):
@@ -30,7 +31,7 @@ def upload_user(username, date_checked, following, create_session=None):
         if user2 is None:
             user2 = User(f, None)
             session.add(user2)
-        session.add(FollowingRelationship(user.id, user2.id))
+        session.add(FollowingRelationship(user, user2))
     session.commit()
 
 def main():
@@ -41,7 +42,7 @@ def main():
     c = session.connection()
     # This is only valid for SQLite3, but it makes it much faster
     c.execute('''PRAGMA SYNCHRONOUS=OFF;''')
-    for i,fname in enumerate(glob('database/*/*')):
+    for i,fname in enumerate(glob('database/*/*.follow')):
         upload_user(*read_user(fname), create_session=(lambda : session))
         if (i % 1000) == 0: print i
 
