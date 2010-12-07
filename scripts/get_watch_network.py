@@ -37,9 +37,11 @@ for username,uid in users:
     except RuntimeError, e:
         if e.args[0].find('404') > 0:
             print 'Error 404 for user: %s: %s' % (username, e)
+            output_watch_text(username, [])
+            continue
         print 'Error for user: %s: %s' % (username, e)
         continue
-    except:
+    except Exception, e:
         print 'Error for user: %s: %s' % (username, e)
         continue
     output_watch_text(username, repos)
