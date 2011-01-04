@@ -53,8 +53,12 @@ class Repository(Base):
 class WatchRelationship(Base):
     __tablename__ = 'watch'
     id = Column(Integer, primary_key=True)
-    watcher = Column(Integer, ForeignKey('user.id'), index=True)
-    watched_repo = Column(Integer, ForeignKey('repository.id'), index=True)
+    watcher_id = Column(Integer, ForeignKey('user.id'), index=True)
+    watched_repo_id = Column(Integer, ForeignKey('repository.id'), index=True)
+    date_checked = Column(DateTime)
+
+    watcher = relation(User, primaryjoin=(User.id == watcher_id))
+    watched_repo = relation(Repository, primaryjoin=(Repository.id == watched_repo_id))
 
     def __init__(self, watcher, watched_repo):
         self.watcher = watcher
