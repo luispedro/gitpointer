@@ -28,4 +28,13 @@ is relatively small, we chose to simply simulate a few long random walks. On a
 laptop, with the inner loop running in Python (but using our optimised graph
 representation in C++), it takes 106s to perform 10 million steps.
 
+For recommending possible users or repositories, github suggest performs a
+series of small (10 step) random walks starting at the user of interest. Those
+nodes with a higher than expected visitation rate are recommended.
+
+This straightforward approach was fragile to nodes which had a very small
+stationary probability (and which could therefore easily be over-represented in
+the random walks starting from the node of interest, even if they are not very
+relevant). Therefore, we introduce a correction such that a node with less than
+4 incoming connections is weighted down.
 
